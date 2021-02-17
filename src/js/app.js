@@ -23,10 +23,41 @@ function inciarApp(){
     botonesPaginador();
 }
 
+function botonesPaginador(){
+    paginaSiguiente = document.querySelector("#siguiente");
+    paginaAnterior = document.querySelector("#anterior");
+
+    if(pagina === 1){
+        paginaAnterior.classList.add("ocultar");
+    }else if(pagina === 3){
+        paginaSiguiente.classList.add("ocultar");
+        paginaAnterior.classList.remove("ocultar");
+    }else{
+        paginaSiguiente.classList.remove("ocultar");
+        paginaAnterior.classList.remove("ocultar");
+
+    }
+
+    mostrarSeccion();
+    
+}
+
 function mostrarSeccion(){
+    const seccionAnterior = document.querySelector(".mostrar-seccion");
+
+    if(seccionAnterior){
+        //eliminar seccion anterior
+        seccionAnterior.classList.remove("mostrar-seccion");
+    }
+
     const seccionActual = document.querySelector(`#paso-${pagina}`);
     seccionActual.classList.add("mostrar-seccion");
-
+    
+    //Eliminar clase actual en tab anterior
+    const tabAnterior =document.querySelector(".tabs .actual");
+    if (tabAnterior){
+        tabAnterior.classList.remove("actual");
+    }    
     //Resalta el tab actual
     const tab = document.querySelector(`[data-paso="${pagina}"]`);
     tab.classList.add("actual");
@@ -38,22 +69,12 @@ function cambiarSeccion(){
         enlace.addEventListener("click", e =>{
             e.preventDefault();
             pagina = parseInt(e.target.dataset.paso);
-
-            //eliminar seccion anterior
-            document.querySelector(".mostrar-seccion").classList.remove("mostrar-seccion");
-
-            // Agrega mostrar seccion donde dimos click
-            const seccion = document.querySelector(`#paso-${pagina}`);
-            seccion.classList.add("mostrar-seccion");
-
-            //Eliminar clase actual en tab anterior
-            document.querySelector(".tabs .actual").classList.remove("actual");
-            //Agregar clase actual al nuevo boton
-            const tab = document.querySelector(`[data-paso="${pagina}"]`);
-            tab.classList.add("actual");
-
+  
+            mostrarSeccion();
+            botonesPaginador();
         });
     });
+
 }
 
 
@@ -115,7 +136,7 @@ function paginaSiguiente(){
     paginaSiguiente = document.querySelector("#siguiente");
     paginaSiguiente.addEventListener("click", ()=>{
         pagina ++;
-        console.log(pagina);
+        botonesPaginador();
     })
 }
 
@@ -123,16 +144,7 @@ function paginaAnterior(){
     paginaAnterior = document.querySelector("#anterior");
     paginaAnterior.addEventListener("click", ()=>{
         pagina --;
-        console.log(pagina);
+        botonesPaginador();
     })
 }
 
-function botonesPaginador(){
-    paginaSiguiente = document.querySelector("#siguiente");
-    paginaAnterior = document.querySelector("#anterior");
-
-    if(pagina){
-
-    }
-    
-}
