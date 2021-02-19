@@ -1,4 +1,10 @@
 let pagina = 1;
+const cita = {
+    nombre: "",
+    fecha: "",
+    hora: "",
+    servicios:[]
+}
 
 document.addEventListener("DOMContentLoaded", function(){
     inciarApp();
@@ -21,7 +27,15 @@ function inciarApp(){
 
     //Comprueba la pagina actual para ocultar o mostrar la paginacion
     botonesPaginador();
+
+    //Muestra el resumen de la cita o mnsj de error si no completa
+    mostrarResumen();
+
+    //Almacena el nombre de la cita en el objeto
+    nombreCita();
 }
+
+
 
 function botonesPaginador(){
     paginaSiguiente = document.querySelector("#siguiente");
@@ -125,10 +139,30 @@ function seleccionarServicio(e){
 
     if(elemento.classList.contains("seleccionado")){
         elemento.classList.remove("seleccionado");
+        const id = parseInt(elemento.dataset.idServicio);
+        eliminarServicio(id);
     }else{
         elemento.classList.add("seleccionado");
+        servicioObj ={
+            id: parseInt(elemento.dataset.idServicio),
+            nombre: elemento.firstElementChild.textContent,
+            precio: elemento.firstElementChild.nextElementSibling.textContent
 
+        }
+        agregarServicio(servicioObj);
     }
+}
+
+function eliminarServicio(id){
+    const {servicios} = cita;
+    cita.servicios = servicios.filter(servicio => servicio.id !== id);
+    console.log(cita);
+}
+
+function agregarServicio(servicioObj){
+    const {servicios} = cita;
+   cita.servicios = [...servicios, servicioObj];
+   console.log(cita);
 }
 
 
@@ -148,3 +182,46 @@ function paginaAnterior(){
     })
 }
 
+function mostrarResumen(){
+    // Destructuring
+    const {nombre, fecha, hora, servicios} = cita;
+
+    const resumenDiv = document.querySelector(".contenido-resumen");
+
+    // Vaidación de objeto
+    if(Object.values(cita).includes("")){
+        const noServicio = document.createElement("p");
+        noServicio.textContent = "Faltan datos de cita por llenar";
+        noServicio.classList.add("invalidar-cita");
+        //Agregar a resumen div
+        resumenDiv.appendChild(noServicio);
+    }
+
+
+}
+
+function nombreCita(){
+    const nombreInput = document.querySelector("#nombre");
+    nombreInput.addEventListener("input", (e)=>{
+        const nombreTexto = e.target.value.trim();
+        if(nombreTexto === "" || nombreTexto.length <3){
+           mostrarAlerta("Mensaje n valido", "error")
+        }else{
+            cita.nombre = nombreTexto;
+        }
+    });
+}
+
+function mostrarAlerta(mensaje){
+    const alerta = document.createElement("div");
+    alerta.textContent = mensaje;
+    alerta.classList.add("alerta");
+
+    if(tipo === "error"){
+        alerta.classList.add("error");
+    }
+
+    // Insertar en el html
+    const formulario = document.querySelector(".formulario");
+    formulario.appendChild(alerta);
+}
